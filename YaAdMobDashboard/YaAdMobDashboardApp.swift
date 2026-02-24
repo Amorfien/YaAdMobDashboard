@@ -11,7 +11,7 @@ import SwiftUI
 struct YaAdMobDashboardApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            StatisticsView()
         }
     }
 }

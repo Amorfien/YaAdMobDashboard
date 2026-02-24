@@ -1,0 +1,66 @@
+//
+//  StatisticsResponse.swift
+//  YaAdMobDashboard
+//
+//  Created by Pavel Grigorev on 24.02.2026.
+//
+
+import Foundation
+
+struct StatisticsResponse: Decodable {
+    let data: DataContainer
+
+    struct DataContainer: Decodable {
+        let points: [Point]
+
+        struct Point: Decodable {
+            let measures: [Measure]
+
+            struct Measure: Decodable {
+                let partnerWoNds: Double
+
+                enum CodingKeys: String, CodingKey {
+                    case partnerWoNds = "partner_wo_nds"
+                }
+            }
+        }
+    }
+}
+
+enum StatisticsPeriod: String, CaseIterable, Identifiable {
+    case today
+    case yesterday
+    case days7 = "7days"
+    case days14 = "14days"
+    case days30 = "30days"
+    case days90 = "90days"
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .today: return "Сегодня"
+        case .yesterday: return "Вчера"
+        case .days7: return "7 дней"
+        case .days14: return "14 дней"
+        case .days30: return "30 дней"
+        case .days90: return "90 дней"
+        }
+    }
+}
+
+enum RequestType: String, CaseIterable, Identifiable {
+    case yandex = "main"
+    case mediation = "mm"
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .yandex:
+            "РСЯ"
+        case .mediation:
+            "Медиация"
+        }
+    }
+}
