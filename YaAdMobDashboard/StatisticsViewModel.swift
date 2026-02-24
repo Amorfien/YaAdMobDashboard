@@ -13,7 +13,7 @@ import Combine
 @MainActor
 final class StatisticsViewModel: ObservableObject {
     
-    @Published var apiKey: String = "y0__xD26rQ_GOeMLSD-3-PEFt6FvUrpBm0jipp19TkdXvpEiGDl"
+    @Published var apiKey: String = Config.apiKey
     @Published var selectedType: RequestType = .yandex
     @Published var selectedPeriod: StatisticsPeriod = .today
     @Published var result: String?
