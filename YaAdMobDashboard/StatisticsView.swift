@@ -13,7 +13,7 @@ struct StatisticsView: View {
     @StateObject private var viewModel = StatisticsViewModel()
     
     var body: some View {
-        VStack(spacing: 32) {
+        VStack(spacing: 36) {
 
             Image(viewModel.requestConfig.type.image)
                 .resizable()
@@ -48,7 +48,8 @@ struct StatisticsView: View {
                 if viewModel.isLoading {
                     ProgressView()
                 } else {
-                    Text("Fetch")
+                    Text("Запрос")
+                        .foregroundStyle(.black)
                         .frame(maxWidth: .infinity, maxHeight: 40)
                 }
             }
@@ -58,9 +59,15 @@ struct StatisticsView: View {
             Divider()
             
             if let result = viewModel.result {
-                Text("Reward: \(result)")
-                    .font(.title2)
-                    .bold()
+                HStack(alignment: .top) {
+                    Text("Reward:")
+                    Spacer()
+                    Text(result)
+                        .bold()
+                        .multilineTextAlignment(.trailing)
+                }
+                .font(.title2)
+                .frame(maxWidth: .infinity)
             }
             
             if let error = viewModel.errorMessage {
@@ -82,7 +89,7 @@ struct StatisticsView: View {
                 .frame(width: 128)
             }
         }
-        .padding()
+        .padding(20)
     }
 }
 

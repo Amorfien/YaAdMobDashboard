@@ -66,10 +66,10 @@ extension NetworkManager {
     ) async throws -> String? {
 
         var queryItems = [
-            URLQueryItem(name: "lang", value: lang.rawValue),
-            URLQueryItem(name: "stat_type", value: type.rawValue),
-            URLQueryItem(name: "currency", value: currency.rawValue),
-            URLQueryItem(name: "period", value: period.rawValue)
+            URLQueryItem(name: lang.queryName, value: lang.rawValue),
+            URLQueryItem(name: type.queryName, value: type.rawValue),
+            URLQueryItem(name: currency.queryName, value: currency.rawValue),
+            URLQueryItem(name: period.queryName, value: period.rawValue)
         ]
 
         switch type {
@@ -101,10 +101,10 @@ extension NetworkManager {
         var reward: String
         switch type {
         case .yandex:
-            reward = "\(firstMeasure.partnerWoNds, default: "??")"
+            reward = "\(firstMeasure.partnerWoNds, default: "??") \(currency.rawValue)"
         case .mediation:
-            reward = "\(firstMeasure.revenueMm, default: "??") (\(firstMeasure.revenueExternalMm, default: "??"))"
+            reward = "Total - \(firstMeasure.revenueMm, default: "??") \(currency.rawValue)\nExternal - \(firstMeasure.revenueExternalMm, default: "??") \(currency.rawValue)"
         }
-        return reward + " " + currency.rawValue.lowercased()
+        return reward
     }
 }

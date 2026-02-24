@@ -3,6 +3,16 @@
     {
       "filename" : "yandexAd.png",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "yandexAd 1.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {

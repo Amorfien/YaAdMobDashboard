@@ -41,6 +41,10 @@ enum StatisticsPeriod: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    var queryName: String {
+        "period"
+    }
+
     var title: String {
         switch self {
         case .today: return "Сегодня"
@@ -58,11 +62,19 @@ enum Currency: String, CaseIterable, Identifiable {
     case usd = "USD"
 
     var id: String { rawValue }
+
+    var queryName: String {
+        "currency"
+    }
 }
 
 enum Language: String {
     case ru = "ru"
     case en = "en"
+
+    var queryName: String {
+        "lang"
+    }
 }
 
 enum RequestType: String, CaseIterable, Identifiable {
@@ -70,6 +82,10 @@ enum RequestType: String, CaseIterable, Identifiable {
     case mediation = "mm"
 
     var id: String { rawValue }
+
+    var queryName: String {
+        "stat_type"
+    }
 
     var title: String {
         switch self {
