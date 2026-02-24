@@ -17,10 +17,14 @@ struct StatisticsResponse: Decodable {
             let measures: [Measure]
 
             struct Measure: Decodable {
-                let partnerWoNds: Double
+                let partnerWoNds: Double?
+                let revenueMm: Double?
+                let revenueExternalMm: Double?
 
                 enum CodingKeys: String, CodingKey {
                     case partnerWoNds = "partner_wo_nds"
+                    case revenueMm = "revenue_mm"
+                    case revenueExternalMm = "revenue_external_mm"
                 }
             }
         }
@@ -47,6 +51,16 @@ enum StatisticsPeriod: String, CaseIterable, Identifiable {
         case .days90: return "90 дней"
         }
     }
+}
+
+enum Currency: String {
+    case rub = "RUB"
+    case usd = "USD"
+}
+
+enum Language: String {
+    case ru = "ru"
+    case en = "en"
 }
 
 enum RequestType: String, CaseIterable, Identifiable {

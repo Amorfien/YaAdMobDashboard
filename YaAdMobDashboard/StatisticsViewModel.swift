@@ -13,10 +13,10 @@ import Combine
 @MainActor
 final class StatisticsViewModel: ObservableObject {
     
-    @Published var apiKey: String = ""
+    @Published var apiKey: String = "y0__xD26rQ_GOeMLSD-3-PEFt6FvUrpBm0jipp19TkdXvpEiGDl"
     @Published var selectedType: RequestType = .yandex
-    @Published var selectedPeriod: StatisticsPeriod = .days7
-    @Published var result: Double?
+    @Published var selectedPeriod: StatisticsPeriod = .today
+    @Published var result: String?
     @Published var isLoading = false
     @Published var errorMessage: String?
     
@@ -34,7 +34,8 @@ final class StatisticsViewModel: ObservableObject {
         do {
             let value = try await networkManager.fetchPartnerReward(
                 apiKey: apiKey,
-                period: selectedPeriod.rawValue
+                type: selectedType,
+                period: selectedPeriod
             )
             result = value
         } catch {

@@ -59,18 +59,26 @@ extension NetworkManager {
 
     func fetchPartnerReward(
         apiKey: String,
-        lang: String = "ru",
-        currency: String = "USD",
-        period: String = "7days",
-        field: String = "partner_wo_nds"
-    ) async throws -> Double {
+        type: RequestType = .yandex,
+        lang: Language = .ru,
+        currency: Currency = .rub,
+        period: StatisticsPeriod = .today,
+    ) async throws -> String? {
 
-        let queryItems = [
-            URLQueryItem(name: "lang", value: lang),
-            URLQueryItem(name: "currency", value: currency),
-            URLQueryItem(name: "period", value: period),
-            URLQueryItem(name: "field", value: field)
+        var queryItems = [
+            URLQueryItem(name: "lang", value: lang.rawValue),
+            URLQueryItem(name: "stat_type", value: type.rawValue),
+            URLQueryItem(name: "currency", value: currency.rawValue),
+            URLQueryItem(name: "period", value: period.rawValue)
         ]
+
+        switch type {
+        case .yandex:
+            queryItems.append(URLQueryItem(name: "field", value: "partner_wo_nds"))
+        case .mediation:
+            queryItems.append(URLQueryItem(name: "field", value: "revenue_mm"))
+            queryItems.append(URLQueryItem(name: "field", value: "revenue_external_mm"))
+        }
 
         let headers = [
             "Authorization": "OAuth \(apiKey)"
@@ -90,6 +98,13 @@ extension NetworkManager {
             throw NSError(domain: "ParsingError", code: -1)
         }
 
-        return firstMeasure.partnerWoNds
+        var reward: String
+        switch type {
+        case .yandex:
+            reward = "\(firstMeasure.partnerWoNds, default: "??")"
+        case .mediation:
+            reward = "\(firstMeasure.revenueMm, default: "??") (\(firstMeasure.revenueExternalMm, default: "??"))"
+        }
+        return reward + " " + currency.rawValue.lowercased()
     }
 }

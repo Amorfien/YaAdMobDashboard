@@ -52,7 +52,7 @@ struct StatisticsView: View {
             Divider()
             
             if let result = viewModel.result {
-                Text("Reward: \(result, specifier: "%.2f")")
+                Text("Reward: \(result)")
                     .font(.title2)
                     .bold()
             }
