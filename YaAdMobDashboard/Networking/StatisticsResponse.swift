@@ -5,7 +5,7 @@
 //  Created by Pavel Grigorev on 24.02.2026.
 //
 
-import Foundation
+import SwiftUI
 
 struct StatisticsResponse: Decodable {
     let data: DataContainer
@@ -53,9 +53,11 @@ enum StatisticsPeriod: String, CaseIterable, Identifiable {
     }
 }
 
-enum Currency: String {
+enum Currency: String, CaseIterable, Identifiable {
     case rub = "RUB"
     case usd = "USD"
+
+    var id: String { rawValue }
 }
 
 enum Language: String {
@@ -75,6 +77,13 @@ enum RequestType: String, CaseIterable, Identifiable {
             "РСЯ"
         case .mediation:
             "Медиация"
+        }
+    }
+
+    var image: ImageResource {
+        switch self {
+        case .yandex: return .yandexAd
+        case .mediation: return .easyMon
         }
     }
 }

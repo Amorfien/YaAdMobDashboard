@@ -13,20 +13,26 @@ struct StatisticsView: View {
     @StateObject private var viewModel = StatisticsViewModel()
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 32) {
 
-            Picker("Type", selection: $viewModel.selectedType) {
+            Image(viewModel.requestConfig.type.image)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 26)
+
+            Picker("Type", selection: $viewModel.requestConfig.type) {
                 ForEach(RequestType.allCases) { type in
                     Text(type.title).tag(type)
                 }
             }
             .pickerStyle(.segmented)
 
-            TextField("Enter API Key", text: $viewModel.apiKey)
+            SecureField("Enter API Key", text: $viewModel.requestConfig.apiKey)
                 .textFieldStyle(.roundedBorder)
                 .autocapitalization(.none)
-            
-            Picker("Period", selection: $viewModel.selectedPeriod) {
+                .font(.system(size: 10))
+
+            Picker("Period", selection: $viewModel.requestConfig.period) {
                 ForEach(StatisticsPeriod.allCases) { period in
                     Text(period.title).tag(period)
                 }
@@ -47,8 +53,8 @@ struct StatisticsView: View {
                 }
             }
             .buttonStyle(.borderedProminent)
-            .disabled(viewModel.apiKey.isEmpty || viewModel.isLoading)
-            
+            .disabled(viewModel.requestConfig.apiKey.isEmpty || viewModel.isLoading)
+
             Divider()
             
             if let result = viewModel.result {
@@ -64,6 +70,17 @@ struct StatisticsView: View {
             }
             
             Spacer()
+
+            HStack {
+                Spacer()
+                Picker("Currency", selection: $viewModel.requestConfig.currency) {
+                    ForEach(Currency.allCases) { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 128)
+            }
         }
         .padding()
     }

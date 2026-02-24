@@ -10,12 +10,27 @@ import Foundation
 import SwiftUI
 import Combine
 
+struct RequestConfig {
+    var apiKey: String
+    var type: RequestType
+    var language: Language
+    var currency: Currency
+    var period: StatisticsPeriod
+
+    static let initial = Self.init(
+        apiKey: Config.apiKey,
+        type: .yandex,
+        language: .ru,
+        currency: .rub,
+        period: .today
+    )
+}
+
 @MainActor
 final class StatisticsViewModel: ObservableObject {
-    
-    @Published var apiKey: String = Config.apiKey
-    @Published var selectedType: RequestType = .yandex
-    @Published var selectedPeriod: StatisticsPeriod = .today
+
+    @Published var requestConfig: RequestConfig = .initial
+
     @Published var result: String?
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -25,17 +40,18 @@ final class StatisticsViewModel: ObservableObject {
     )
     
     func fetch() async {
-        guard !apiKey.isEmpty else { return }
-        
+        guard !requestConfig.apiKey.isEmpty else { return }
+
         isLoading = true
         errorMessage = nil
         result = nil
         
         do {
             let value = try await networkManager.fetchPartnerReward(
-                apiKey: apiKey,
-                type: selectedType,
-                period: selectedPeriod
+                apiKey: requestConfig.apiKey,
+                type: requestConfig.type,
+                currency: requestConfig.currency,
+                period: requestConfig.period
             )
             result = value
         } catch {
