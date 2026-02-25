@@ -11,6 +11,7 @@ import SwiftUI
 struct StatisticsView: View {
     
     @ObservedObject private var viewModel: StatisticsViewModel
+    @FocusState private var isFocused: Bool
 
     init(viewModel: StatisticsViewModel) {
         self.viewModel = viewModel
@@ -37,6 +38,10 @@ struct StatisticsView: View {
                         .textFieldStyle(.roundedBorder)
                         .autocapitalization(.none)
                         .font(.system(size: 9))
+                        .focused($isFocused)
+                        .onSubmit {
+                            isFocused = false
+                        }
 
                     Picker("Period", selection: $viewModel.requestConfig.period) {
                         ForEach(StatisticsPeriod.allCases) { period in
@@ -47,6 +52,7 @@ struct StatisticsView: View {
                     .controlSize(.large)
 
                     Button {
+                        isFocused = false
                         Task {
                             await viewModel.fetch()
                         }
@@ -93,6 +99,10 @@ struct StatisticsView: View {
                 }
                 .padding(.horizontal)
             }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            isFocused = false
         }
     }
 }
