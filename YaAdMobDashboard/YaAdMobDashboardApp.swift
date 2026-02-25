@@ -11,7 +11,9 @@ import SwiftUI
 struct YaAdMobDashboardApp: App {
     var body: some Scene {
         WindowGroup {
-            StatisticsView()
+            let networkManager = NetworkManager()
+            let viewModel = StatisticsViewModel(networkManager: networkManager)
+            StatisticsView(viewModel: viewModel)
         }
     }
 }

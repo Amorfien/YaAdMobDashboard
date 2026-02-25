@@ -11,9 +11,9 @@ import Foundation
 final class NetworkManager {
     
     private let session: URLSession
-    private let baseURL: URL
-    
-    init(baseURL: URL,
+    private let baseURL: URL?
+
+    init(baseURL: URL? = RequestConstants.baseURL,
          session: URLSession = .shared) {
         self.baseURL = baseURL
         self.session = session
@@ -21,13 +21,15 @@ final class NetworkManager {
     
     func request<T: Decodable>(
         path: String,
-        method: String = "GET",
+        method: String,
         queryItems: [URLQueryItem] = [],
         headers: [String: String] = [:],
         body: Data? = nil,
         responseType: T.Type
     ) async throws -> T {
-        
+
+        guard let baseURL else { throw URLError(.badURL) }
+
         var components = URLComponents(
             url: baseURL.appendingPathComponent(path),
             resolvingAgainstBaseURL: false
@@ -55,14 +57,14 @@ final class NetworkManager {
     }
 }
 
-extension NetworkManager {
+extension NetworkManager: NetworkProtocol {
 
     func fetchPartnerReward(
         apiKey: String,
-        type: RequestType = .yandex,
-        lang: Language = .ru,
-        currency: Currency = .rub,
-        period: StatisticsPeriod = .today,
+        type: RequestType,
+        lang: Language,
+        currency: Currency,
+        period: StatisticsPeriod,
     ) async throws -> String? {
 
         var queryItems = [
@@ -74,18 +76,24 @@ extension NetworkManager {
 
         switch type {
         case .yandex:
-            queryItems.append(URLQueryItem(name: "field", value: "partner_wo_nds"))
+            queryItems.append(URLQueryItem(name: RequestConstants.queryField,
+                                           value: RequestConstants.partnerRevenue.key))
         case .mediation:
-            queryItems.append(URLQueryItem(name: "field", value: "revenue_mm"))
-            queryItems.append(URLQueryItem(name: "field", value: "revenue_external_mm"))
+            queryItems.append(URLQueryItem(name: RequestConstants.queryField,
+                                           value: RequestConstants.mediationSmartRevenue.key))
+            queryItems.append(URLQueryItem(name: RequestConstants.queryField,
+                                           value: RequestConstants.mediationTotalRevenue.key))
+            queryItems.append(URLQueryItem(name: RequestConstants.queryField,
+                                           value: RequestConstants.mediationExternalRevenue.key))
         }
 
         let headers = [
-            "Authorization": "OAuth \(apiKey)"
+            RequestConstants.authHeaderKey: RequestConstants.apiKeyPrefix + apiKey
         ]
 
         let response: StatisticsResponse = try await request(
-            path: "statistics2/get.json",
+            path: RequestConstants.urlPath,
+            method: RequestConstants.method,
             queryItems: queryItems,
             headers: headers,
             responseType: StatisticsResponse.self
@@ -101,9 +109,19 @@ extension NetworkManager {
         var reward: String
         switch type {
         case .yandex:
-            reward = "\(firstMeasure.partnerWoNds, default: "??") \(currency.rawValue)"
+            reward = """
+\(firstMeasure.partnerWoNds, default: "??") \(currency.rawValue)
+\(RequestConstants.partnerRevenue.desc)
+"""
         case .mediation:
-            reward = "Total - \(firstMeasure.revenueMm, default: "??") \(currency.rawValue)\nExternal - \(firstMeasure.revenueExternalMm, default: "??") \(currency.rawValue)"
+            reward = """
+\(firstMeasure.revenueSmartMm, default: "??") \(currency.rawValue)
+\(RequestConstants.mediationSmartRevenue.desc)
+\(firstMeasure.revenueMm, default: "??") \(currency.rawValue)
+\(RequestConstants.mediationTotalRevenue.desc)
+\(firstMeasure.revenueExternalMm, default: "??") \(currency.rawValue)
+\(RequestConstants.mediationExternalRevenue.desc)
+"""
         }
         return reward
     }

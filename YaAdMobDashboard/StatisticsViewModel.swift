@@ -35,10 +35,12 @@ final class StatisticsViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    private let networkManager = NetworkManager(
-        baseURL: URL(string: "https://partner.yandex.ru/api/")!
-    )
-    
+    private let networkManager: NetworkProtocol
+
+    init(networkManager: NetworkProtocol) {
+        self.networkManager = networkManager
+    }
+
     func fetch() async {
         guard !requestConfig.apiKey.isEmpty else { return }
 
@@ -50,6 +52,7 @@ final class StatisticsViewModel: ObservableObject {
             let value = try await networkManager.fetchPartnerReward(
                 apiKey: requestConfig.apiKey,
                 type: requestConfig.type,
+                lang: requestConfig.language,
                 currency: requestConfig.currency,
                 period: requestConfig.period
             )

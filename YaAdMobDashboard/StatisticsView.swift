@@ -10,10 +10,14 @@ import SwiftUI
 
 struct StatisticsView: View {
     
-    @StateObject private var viewModel = StatisticsViewModel()
-    
+    @ObservedObject private var viewModel: StatisticsViewModel
+
+    init(viewModel: StatisticsViewModel) {
+        self.viewModel = viewModel
+    }
+
     var body: some View {
-        VStack(spacing: 36) {
+        VStack(spacing: 32) {
 
             Image(viewModel.requestConfig.type.image)
                 .resizable()
@@ -30,7 +34,7 @@ struct StatisticsView: View {
             SecureField("Enter API Key", text: $viewModel.requestConfig.apiKey)
                 .textFieldStyle(.roundedBorder)
                 .autocapitalization(.none)
-                .font(.system(size: 10))
+                .font(.system(size: 9))
 
             Picker("Period", selection: $viewModel.requestConfig.period) {
                 ForEach(StatisticsPeriod.allCases) { period in
@@ -57,17 +61,10 @@ struct StatisticsView: View {
             .disabled(viewModel.requestConfig.apiKey.isEmpty || viewModel.isLoading)
 
             Divider()
-            
+
             if let result = viewModel.result {
-                HStack(alignment: .top) {
-                    Text("Reward:")
-                    Spacer()
                     Text(result)
-                        .bold()
-                        .multilineTextAlignment(.trailing)
-                }
-                .font(.title2)
-                .frame(maxWidth: .infinity)
+                    .font(.subheadline)
             }
             
             if let error = viewModel.errorMessage {
@@ -94,5 +91,5 @@ struct StatisticsView: View {
 }
 
 #Preview {
-    StatisticsView()
+    StatisticsView(viewModel: StatisticsViewModel(networkManager: NetworkManager()))
 }
