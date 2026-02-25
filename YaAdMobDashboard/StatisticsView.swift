@@ -17,76 +17,83 @@ struct StatisticsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 32) {
+        ZStack {
+            ScrollView {
+                VStack(spacing: 32) {
 
-            Image(viewModel.requestConfig.type.image)
-                .resizable()
-                .scaledToFit()
-                .frame(height: 26)
+                    Image(viewModel.requestConfig.type.image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 26)
 
-            Picker("Type", selection: $viewModel.requestConfig.type) {
-                ForEach(RequestType.allCases) { type in
-                    Text(type.title).tag(type)
-                }
-            }
-            .pickerStyle(.segmented)
+                    Picker("Type", selection: $viewModel.requestConfig.type) {
+                        ForEach(RequestType.allCases) { type in
+                            Text(type.title).tag(type)
+                        }
+                    }
+                    .pickerStyle(.segmented)
 
-            SecureField("Enter API Key", text: $viewModel.requestConfig.apiKey)
-                .textFieldStyle(.roundedBorder)
-                .autocapitalization(.none)
-                .font(.system(size: 9))
+                    SecureField("Enter API Key", text: $viewModel.requestConfig.apiKey)
+                        .textFieldStyle(.roundedBorder)
+                        .autocapitalization(.none)
+                        .font(.system(size: 9))
 
-            Picker("Period", selection: $viewModel.requestConfig.period) {
-                ForEach(StatisticsPeriod.allCases) { period in
-                    Text(period.title).tag(period)
-                }
-            }
-            .pickerStyle(.segmented)
-            .controlSize(.large)
+                    Picker("Period", selection: $viewModel.requestConfig.period) {
+                        ForEach(StatisticsPeriod.allCases) { period in
+                            Text(period.title).tag(period)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .controlSize(.large)
 
-            Button {
-                Task {
-                    await viewModel.fetch()
-                }
-            } label: {
-                if viewModel.isLoading {
-                    ProgressView()
-                } else {
-                    Text("Запрос")
-                        .foregroundStyle(.black)
-                        .frame(maxWidth: .infinity, maxHeight: 40)
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(viewModel.requestConfig.apiKey.isEmpty || viewModel.isLoading)
+                    Button {
+                        Task {
+                            await viewModel.fetch()
+                        }
+                    } label: {
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .frame(maxWidth: .infinity, minHeight: 40)
+                        } else {
+                            Text("Запрос")
+                                .font(.title3)
+                                .foregroundStyle(.black)
+                                .frame(maxWidth: .infinity, minHeight: 40)
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(viewModel.requestConfig.apiKey.isEmpty || viewModel.isLoading)
 
-            Divider()
+                    Divider()
 
-            if let result = viewModel.result {
-                    Text(result)
-                    .font(.subheadline)
-            }
-            
-            if let error = viewModel.errorMessage {
-                Text(error)
-                    .foregroundColor(.red)
-                    .font(.footnote)
-            }
-            
-            Spacer()
+                    if let result = viewModel.result {
+                        Text(result)
+                    }
 
-            HStack {
-                Spacer()
-                Picker("Currency", selection: $viewModel.requestConfig.currency) {
-                    ForEach(Currency.allCases) { type in
-                        Text(type.rawValue).tag(type)
+                    if let error = viewModel.errorMessage {
+                        Text(error)
+                            .foregroundColor(.red)
+                            .font(.footnote)
                     }
                 }
-                .pickerStyle(.segmented)
-                .frame(width: 128)
+                .padding(20)
+            }
+
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Picker("Currency", selection: $viewModel.requestConfig.currency) {
+                        ForEach(Currency.allCases) { type in
+                            Text(type.rawValue).tag(type)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 128)
+                }
+                .padding(.horizontal)
             }
         }
-        .padding(20)
     }
 }
 

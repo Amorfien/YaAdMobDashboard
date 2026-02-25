@@ -117,8 +117,10 @@ extension NetworkManager: NetworkProtocol {
             reward = """
 \(firstMeasure.revenueSmartMm, default: "??") \(currency.rawValue)
 \(RequestConstants.mediationSmartRevenue.desc)
+
 \(firstMeasure.revenueMm, default: "??") \(currency.rawValue)
 \(RequestConstants.mediationTotalRevenue.desc)
+
 \(firstMeasure.revenueExternalMm, default: "??") \(currency.rawValue)
 \(RequestConstants.mediationExternalRevenue.desc)
 """
